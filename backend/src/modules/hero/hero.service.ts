@@ -31,7 +31,6 @@ export const updateHeroSection = async (id: string, data: {
     button_title_en?: string;
     button_url?: string;
 }) => {
-    // Doğru tabloyu kullan: hero_section
     const [oldHero] = await db.select().from(hero_section).where(eq(hero_section.id, id));
     if (oldHero && oldHero.img_url && oldHero.img_url !== data.img_url) {
         const filePath = oldHero.img_url.startsWith("/uploads/")
