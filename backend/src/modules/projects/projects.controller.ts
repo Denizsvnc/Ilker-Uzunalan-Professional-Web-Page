@@ -6,8 +6,12 @@ export const createProjects = async (req: Request, res: Response) => {
         let cover_data = req.body.cover_data;
         let detail_data = req.body.detail_data;
 
-        if (typeof cover_data === "string") cover_data = JSON.parse(cover_data);
-        if (typeof detail_data === "string") detail_data = JSON.parse(detail_data);
+        try {
+            if (typeof cover_data === "string") cover_data = JSON.parse(cover_data);
+            if (typeof detail_data === "string") detail_data = JSON.parse(detail_data);
+        } catch (parseError) {
+            return res.status(400).json({ error: "Geçersiz JSON formatı. Lütfen detail_data alanını doğru bir JSON formatında gönderin veya boş bırakın." });
+        }
 
         if (!cover_data) cover_data = { ...req.body };
         if (!detail_data) detail_data = req.body.details || [];
@@ -19,14 +23,27 @@ export const createProjects = async (req: Request, res: Response) => {
             cover_data.cover_img_url = `/uploads/${cover_img.filename}`;
         }
 
-        if (files?.['detail_imgs']) {
-            files['detail_imgs'].forEach((file: any, index: number) => {
-                if (detail_data[index]) {
-                    detail_data[index].img_url = `/uploads/${file.filename}`;
-                } else {
-                    detail_data.push({ img_url: `/uploads/${file.filename}` });
-                }
+        const detail_imgs_array = files?.['detail_imgs'] || files?.['detail_imgs[]'];
+        if (detail_imgs_array) {
+            detail_imgs_array.forEach((file: any) => {
+                detail_data.push({ url: `/uploads/${file.filename}`, type: 'image' });
             });
+        }
+
+        let video_urls = req.body.video_urls;
+        if (video_urls) {
+            if (typeof video_urls === "string") {
+                try {
+                    video_urls = JSON.parse(video_urls);
+                } catch (e) {
+                    video_urls = [video_urls];
+                }
+            }
+            if (Array.isArray(video_urls)) {
+                video_urls.forEach((url: string) => {
+                    detail_data.push({ url, type: 'video' });
+                });
+            }
         }
 
         const project = await projectService.createProjects(cover_data, detail_data);
@@ -67,8 +84,12 @@ export const updateProjectById = async (req: Request, res: Response) => {
         let cover_data = req.body.cover_data;
         let detail_data = req.body.detail_data;
 
-        if (typeof cover_data === "string") cover_data = JSON.parse(cover_data);
-        if (typeof detail_data === "string") detail_data = JSON.parse(detail_data);
+        try {
+            if (typeof cover_data === "string") cover_data = JSON.parse(cover_data);
+            if (typeof detail_data === "string") detail_data = JSON.parse(detail_data);
+        } catch (parseError) {
+            return res.status(400).json({ error: "Geçersiz JSON formatı. Lütfen detail_data alanını doğru bir JSON formatında gönderin veya boş bırakın." });
+        }
 
         if (!cover_data) cover_data = { ...req.body };
         if (!detail_data) detail_data = req.body.details || [];
@@ -80,14 +101,27 @@ export const updateProjectById = async (req: Request, res: Response) => {
             cover_data.cover_img_url = `/uploads/${cover_img.filename}`;
         }
 
-        if (files?.['detail_imgs']) {
-            files['detail_imgs'].forEach((file: any, index: number) => {
-                if (detail_data[index]) {
-                    detail_data[index].img_url = `/uploads/${file.filename}`;
-                } else {
-                    detail_data.push({ img_url: `/uploads/${file.filename}` });
-                }
+        const detail_imgs_array = files?.['detail_imgs'] || files?.['detail_imgs[]'];
+        if (detail_imgs_array) {
+            detail_imgs_array.forEach((file: any) => {
+                detail_data.push({ url: `/uploads/${file.filename}`, type: 'image' });
             });
+        }
+
+        let video_urls = req.body.video_urls;
+        if (video_urls) {
+            if (typeof video_urls === "string") {
+                try {
+                    video_urls = JSON.parse(video_urls);
+                } catch (e) {
+                    video_urls = [video_urls];
+                }
+            }
+            if (Array.isArray(video_urls)) {
+                video_urls.forEach((url: string) => {
+                    detail_data.push({ url, type: 'video' });
+                });
+            }
         }
 
         const project = await projectService.updateProjectById(id as string, cover_data, detail_data);

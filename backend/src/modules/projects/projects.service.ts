@@ -15,12 +15,8 @@ export const createProjects = async (
         button_url: string;
     },
     detail_data: Array<{
-        img_url: string;
-        video_url: string;
-        title_tr?: string;
-        title_en?: string;
-        description_tr?: string;
-        description_en?: string;
+        url: string;
+        type: 'image' | 'video';
     }>
 ) => {
     const [newProjectCover] = await db.insert(my_projects).values(cover_data).returning();
@@ -57,17 +53,23 @@ export const updateProjectById = async (
         button_url: string;
     },
     detail_data: Array<{
-        img_url: string;
-        video_url: string;
-        title_tr?: string;
-        title_en?: string;
-        description_tr?: string;
-        description_en?: string;
+        url: string;
+        type: 'image' | 'video';
     }>
 ) => {
     await db.update(my_projects).set(cover_data).where(eq(my_projects.id, id));
 
 
+    const oldDetails = await db.select().from(project_details).where(eq(project_details.details, id));
+    for (const detail of oldDetails) {
+        if (detail.url && detail.url.startsWith("/uploads/")) {
+
+            const filePath = `uploads/${detail.url.replace("/uploads/", "")}`;
+            try {
+                if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+            } catch (err) { }
+        }
+    }
     await db.delete(project_details).where(eq(project_details.details, id));
 
 
@@ -81,8 +83,35 @@ export const updateProjectById = async (
 };
 
 export const deleteProjectById = async (id: string) => {
-    await db.delete(project_details).where(eq(project_details.details, id));
+    const [project] = await db.select().from(my_projects).where(eq(my_projects.id, id));
+    const details = await db.select().from(project_details).where(eq(project_details.details, id));
 
+    for (const detail of details) {
+        if (detail.url && detail.url.startsWith("/uploads/")) {
+            const filePath = `uploads/${detail.url.replace("/uploads/", "")}`;
+            try {
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+            } catch (err) {
+                console.error("Dosya silinemedi:", err);
+            }
+        }
+    }
+
+    if (project && project.cover_img_url && project.cover_img_url.startsWith("/uploads/")) {
+        const filePath = `uploads/${project.cover_img_url.replace("/uploads/", "")}`;
+        try {
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        } catch (err) {
+            console.error("Kapak dosyası silinemedi:", err);
+        }
+    }
+
+    await db.delete(project_details).where(eq(project_details.details, id));
     const [deletedProject] = await db.delete(my_projects).where(eq(my_projects.id, id)).returning();
+
     return deletedProject;
 };

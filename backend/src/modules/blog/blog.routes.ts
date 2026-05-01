@@ -8,5 +8,5 @@ router.post("/create", authMiddleware, adminMiddleware, singleFileUpload, blogCo
 router.get("/blogs", blogController.getAllBlog);
 router.get("/blog/:id", blogController.getBlog);
 router.put("/update/:id", authMiddleware, adminMiddleware, singleFileUpload, blogController.updateblog);
-router.delete("/delete", adminMiddleware, adminMiddleware, blogController.deleteBlog);
+router.delete("/delete/:id", authMiddleware, adminMiddleware, blogController.deleteBlog);
 export default router;

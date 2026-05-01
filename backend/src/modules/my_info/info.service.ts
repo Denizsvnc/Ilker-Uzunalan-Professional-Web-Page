@@ -15,15 +15,15 @@ export const createMyInfo = async (data: {
     pp_url: string;
     phone_number: string;
     email: string;
-    linkedin: string;
-    instagram: string;
-    youtube: string;
+    linkedin_url: string;
+    instagram_url: string;
+    youtube_url: string;
 }) => {
     const allInfo = await db.select().from(my_info);
     if (allInfo.length > 0) {
         console.log("Kişi Bilgileri Zaten Tanımlı")
     } else {
-        const newInfo = await db.insert(my_info).values(data).returning();
+        const [newInfo] = await db.insert(my_info).values(data).returning();
         return newInfo;
     }
 }
@@ -37,9 +37,9 @@ export const updateMyInfo = async (id: string, data: {
     pp_url: string;
     phone_number: string;
     email: string;
-    linkedin: string;
-    instagram: string;
-    youtube: string;
+    linkedin_url: string;
+    instagram_url: string;
+    youtube_url: string;
 }) => {
     const [oldInfo] = await db.select().from(my_info).where(eq(my_info.id, id));
     if (oldInfo && oldInfo.pp_url && oldInfo.pp_url !== data.pp_url) {

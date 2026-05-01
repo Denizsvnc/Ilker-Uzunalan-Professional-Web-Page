@@ -3,8 +3,8 @@ import * as blogService from "./blog.service";
 
 export const createBlog = async (req: Request, res: Response) => {
     try {
-        const img_url = req.file ? `/uploads/${req.file.filename}` : "";
-        const data = { ...req.body, img_url }
+        const cover_img_url = req.file ? `/uploads/${req.file.filename}` : "";
+        const data = { ...req.body, cover_img_url }
         const result = await blogService.createBlog(data);
         res.json(result);
     } catch (err) {
@@ -23,7 +23,7 @@ export const getAllBlog = async (req: Request, res: Response) => {
 
 export const getBlog = async (req: Request, res: Response) => {
     try {
-        const blog = await blogService.getBlog(req.body.id)
+        const blog = await blogService.getBlog(req.params.id as string)
         res.json(blog);
     } catch (err) {
         console.log("Blog getirilirken hata oluştu", err)
@@ -34,7 +34,7 @@ export const updateblog = async (req: Request, res: Response) => {
     try {
         const data = { ...req.body }
         if (req.file) {
-            data.img_url = `/uploads/${req.file.filename}`;
+            data.cover_img_url = `/uploads/${req.file.filename}`;
         }
         const blog = await blogService.updateblog(req.params.id as string, data);
         res.json(blog);

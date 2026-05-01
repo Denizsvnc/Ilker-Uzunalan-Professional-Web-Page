@@ -44,8 +44,8 @@ export const updateAboutus = async (id: string, data: {
             console.error("Eski dosya silinemedi:", err);
         }
     }
-    const updatedAboutUs = await db.update(about_us).set(data).where(eq(about_us.id, id)).returning();
-    return (updateAboutus);
+    const [updatedAboutUs] = await db.update(about_us).set(data).where(eq(about_us.id, id)).returning();
+    return updatedAboutUs;
 
 }
 

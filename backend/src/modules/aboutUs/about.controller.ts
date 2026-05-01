@@ -16,9 +16,8 @@ export const createAboutUs = async (req: Request, res: Response) => {
 
 export const getAboutUs = async (req: Request, res: Response) => {
     try {
-        const data = aboutService.getAboutUs;
-        return data;
-        res.status(200);
+        const data = await aboutService.getAboutUs();
+        res.status(200).json(data);
     } catch (err) {
         console.log("Hakkımızda alanı getirlirken hata oluştu");
         console.log("Hakkımızda alanı getirlirken hata oluştu", err)

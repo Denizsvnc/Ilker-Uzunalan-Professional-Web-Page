@@ -15,9 +15,8 @@ export const createMyInfo = async (req: Request, res: Response) => {
 
 export const getMyInfo = async (req: Request, res: Response) => {
     try {
-        const myInfo = await infoController.getMyInfo;
-        return myInfo;
-        res.status(200);
+        const myInfo = await infoController.getMyInfo();
+        res.status(200).json(myInfo);
     } catch (err) {
         console.log("Bilgilerim Çekilirken Hata Oluştu: ", err)
     }
