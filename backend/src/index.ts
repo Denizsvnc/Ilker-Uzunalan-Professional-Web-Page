@@ -25,9 +25,7 @@ app.use(
   '/api/docs',
   apiReference({
     theme: 'default',
-    spec: {
-      content: openapiDocument,
-    },
+    content: openapiDocument,
   })
 );
 
