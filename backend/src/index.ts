@@ -6,6 +6,7 @@ import authRoutes from "./modules/auth/auth.routes";
 import heroRoutes from "./modules/hero/hero.routes";
 import aboutRoutes from "./modules/aboutUs/about.routes";
 import blogRoutes from "./modules/blog/blog.routes";
+import infoRoutes from "./modules/my_info/info.routes";
 dotenv.config();
 
 const BACKEND_PORT = process.env.BACKEND_PORT || 3005;
@@ -20,6 +21,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/hero", heroRoutes);
 app.use("/api/aboutUs", aboutRoutes);
 app.use("/api/blog", blogRoutes);
+app.use("/api/info", infoRoutes);
 
 app.get("/", (req, res) => {
     res.send("Hello, World!");

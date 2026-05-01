@@ -8,6 +8,4 @@ export const my_info = pgTable("my_info", {
     linkedin_url: varchar("linkedin_url", { length: 255 }),
     instagram_url: varchar("instagram_url", { length: 255 }),
     youtube_url: varchar("youtube_url", { length: 255 }),
-
-
 })

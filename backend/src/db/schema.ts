@@ -1,5 +1,5 @@
-export * from './models/enums';
-export * from './models/user';
+export * from './models/enums'; // ? ok
+export * from './models/user'; // ? seed.ts dosyasında tanımlandı
 export * from "./models/heroSection"; // ? tamamlandı
 export * from "./models/aboutUs"; // ? tamamlandı
 export * from "./models/my_projects";
